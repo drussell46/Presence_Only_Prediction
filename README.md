@@ -1,0 +1,1 @@
+This Python code utilizes the Global Climate Models created for the Contiguous United States and rarfied species distribution points for pistachio crops in the United States. The outputs result in suitability zones for pistachio production throught the Contiguous United States.
