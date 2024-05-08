@@ -1,0 +1,81 @@
+#import
+import arcpy
+import os
+import shutil
+from arcpy import env
+from arcpy.sa import *
+
+#set up parallel processing
+arcpy.env.parallelProcessingFactor = "100%"
+
+#set up environment
+arcpy.env.workspace = r"F:\workspace"
+
+#set up mask environment
+arcpy.env.mask = r"F:\ConUS_shp\ConUS_Dissolved.shp"
+
+# set up parameters for presence only prediction based on results from the Rarified Points and run prediction
+arcpy.stats.PresenceOnlyPrediction(
+    input_point_features=r"F:\Rarified_Pisatchios\CONUS_PIST\rarified_PistPoints_ALL.shp", 
+    contains_background="PRESENCE_ONLY_POINTS",
+    presence_indicator_field=None,
+    explanatory_variables=None,
+    distance_features=None,
+    explanatory_rasters=[[r"F:\CONUS_HistGCM\ConUS_HIST_1.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_2.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_3.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_4.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_5.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_6.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_7.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_8.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_9.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_10.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_11.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_12.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_13.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_14.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_15.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_16.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_17.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_18.tif\Band_1", "false"],
+                        [r"F:\CONUS_HistGCM\ConUS_HIST_19.tif\Band_1", "false"]],
+    basis_expansion_functions="LINEAR;QUADRATIC;PRODUCT;HINGE",
+    number_knots=10,
+    study_area_type="STUDY_POLYGON",
+    study_area_polygon= r"F:\ConUS_shp\ConUS_Dissolved.shp",
+    spatial_thinning="THINNING",
+    thinning_distance_band="5000 Meters",     
+    number_of_iterations=10,
+    relative_weight=100,
+    link_function="CLOGLOG",
+    presence_probability_cutoff = 0.5,
+    output_trained_features=r"F:\workspace\POP_OutputTables.gdb\Out_Trained_Features_A41",
+    output_trained_raster=r"F:\workspace\POP_OutputTables.gdb\Out_Trained_Raster_A41",
+    output_response_curve_table=r"F:\workspace\POP_OutputTables.gdb\Out_Response_Curve_Table_A41",
+    output_sensitivity_table=r"F:\workspace\POP_OutputTables.gdb\Out_Sensitivity_Table_A41",
+    features_to_predict="",
+    output_pred_features=r"F:\workspace\POP_OutputTables.gdb\Out_Prediction_Features_A41",
+    output_pred_raster=r"F:\workspace\POP_OutputTables.gdb\Out_Prediction_Raster_A41",
+    explanatory_variable_matching=None,
+    explanatory_distance_matching=None,
+    explanatory_rasters_matching =[[r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_1", r"F:\CONUS_HistGCM\ConUS_HIST_1.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_2", r"F:\CONUS_HistGCM\ConUS_HIST_2.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_3", r"F:\CONUS_HistGCM\ConUS_HIST_3.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_4", r"F:\CONUS_HistGCM\ConUS_HIST_4.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_5", r"F:\CONUS_HistGCM\ConUS_HIST_5.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_6", r"F:\CONUS_HistGCM\ConUS_HIST_6.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_7", r"F:\CONUS_HistGCM\ConUS_HIST_7.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_8", r"F:\CONUS_HistGCM\ConUS_HIST_8.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_9", r"F:\CONUS_HistGCM\ConUS_HIST_9.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_10", r"F:\CONUS_HistGCM\ConUS_HIST_10.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_11", r"F:\CONUS_HistGCM\ConUS_HIST_11.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_12", r"F:\CONUS_HistGCM\ConUS_HIST_12.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_13", r"F:\CONUS_HistGCM\ConUS_HIST_13.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_14", r"F:\CONUS_HistGCM\ConUS_HIST_14.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_15", r"F:\CONUS_HistGCM\ConUS_HIST_15.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_16", r"F:\CONUS_HistGCM\ConUS_HIST_16.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_17", r"F:\CONUS_HistGCM\ConUS_HIST_17.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_18", r"F:\CONUS_HistGCM\ConUS_HIST_18.tif\Band_1"],
+                        [r"F:\CONUS_204060\ConUS_ACCESS-CM2_ssp585_2041-2060.tif\Band_19", r"F:\CONUS_HistGCM\ConUS_HIST_19.tif\Band_1"]],
+    allow_predictions_outside_of_data_ranges="ALLOWED", resampling_scheme="RANDOM", number_of_groups=3)
